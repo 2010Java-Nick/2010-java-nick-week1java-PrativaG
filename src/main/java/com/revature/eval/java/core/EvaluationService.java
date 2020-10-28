@@ -31,7 +31,13 @@ public class EvaluationService {
 	 */
 	public String acronym(String phrase) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String acronym = "";
+		for (int i=0; i < phrase.length(); i++) {
+			if(phrase.charAt(i) == ' ' || phrase.charAt(i) == '-') {
+				acronym += phrase.charAt(i+1);
+			}
+		}
+		return acronym.toUpperCase();
 	}
 
 	/**
@@ -85,17 +91,28 @@ public class EvaluationService {
 
 		public boolean isEquilateral() {
 			// TODO Write an implementation for this method declaration
+			if(this.sideOne == this.sideTwo) {
+				if(this.sideOne == this.sideThree) {
+					return true;
+				}
+			}
 			return false;
 		}
 
 		public boolean isIsosceles() {
 			// TODO Write an implementation for this method declaration
+			if(this.sideOne == this.sideTwo || this.sideOne == this.sideThree || this.sideTwo == this.sideThree) {
+					return true;
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if(this.sideOne == this.sideTwo || this.sideOne == this.sideThree || this.sideTwo == this.sideThree) {
+				return false;
+			}
+			return true;
 		}
 
 	}
@@ -117,7 +134,44 @@ public class EvaluationService {
 	 */
 	public int getScrabbleScore(String string) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+//		int a, e, i, o, u, l, n, r, s, t;
+//		a = e = o = i = u = l = n = r = s = t = 1;
+//		int b, c, m, p;
+//		b = c = m = p = 3;
+//		int k = 5;
+//		int f, h,  v, w, y;
+//		f = h = v = w = y = 4;
+//		int j, x;
+//		j = x = 8;
+//		int q, z ;
+//		q = z = 10;
+		
+		int scrabbleScore = 0;
+//		int scrabbleString = Integer.parseInt(string);
+		
+		for (int i = 0; i <= string.length(); i++) {
+//			scrabbleString = Character.getNumericValue(string.charAt(i));
+			if(string.charAt(i) == 'a' || string.charAt(i) == 'e' || string.charAt(i) == 'i'
+					|| string.charAt(i) == 'o' || string.charAt(i) == 'u' || string.charAt(i) == 'l'
+					|| string.charAt(i) == 'n' || string.charAt(i) == 'r' || string.charAt(i) == 's'
+					|| string.charAt(i) == 't') {
+				scrabbleScore += 2;
+				
+			}else if (string.charAt(i) == 'b' || string.charAt(i) == 'c' ||
+					string.charAt(i) == 'm' || string.charAt(i) == 'p') {
+				scrabbleScore += 3;
+			}else if(string.charAt(i) == 'k') {
+				scrabbleScore += 5;
+			}else if (string.charAt(i) == 'f' || string.charAt(i) == 'h' || string.charAt(i) == 'v'||
+			string.charAt(i) == 'w' || string.charAt(i) == 'y'){
+				scrabbleScore += 4;
+			}else if(string.charAt(i) == 'j' || string.charAt(i) == 'x') {
+				scrabbleScore += 8;
+			}else if(string.charAt(i) == 'q' || string.charAt(i) == 'z') {
+				scrabbleScore += 10;
+			}
+		}
+		return scrabbleScore;
 	}
 
 	/**
@@ -152,8 +206,20 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		//converting string into character array
+		char[] numberArray = string.toCharArray();
+		
+		//creating mutable string to create the string of available numbers
+		StringBuilder cleanedUpNumber = new StringBuilder();
+		for(char c : numberArray) {
+			if(Character.isDigit(c ))  {
+				cleanedUpNumber.append(c);
+			}
+		}
+		if(cleanedUpNumber.length() > 10) {
+			cleanedUpNumber.deleteCharAt(0);
+		}
+		return cleanedUpNumber.toString();
 	}
 
 	/**
