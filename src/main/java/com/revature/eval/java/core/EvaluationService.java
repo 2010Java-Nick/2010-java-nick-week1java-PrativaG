@@ -1,8 +1,14 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class EvaluationService {
 
@@ -32,10 +38,14 @@ public class EvaluationService {
 	public String acronym(String phrase) {
 		// TODO Write an implementation for this method declaration
 		String acronym = "";
-		for (int i=0; i < phrase.length(); i++) {
-			if(phrase.charAt(i) == ' ' || phrase.charAt(i) == '-') {
-				acronym += phrase.charAt(i+1);
-			}
+		//splitting the string on the basis of space and -
+		String[] allArr = phrase.split("\\ |\\-");
+		
+		for (int i = 0; i < allArr.length; i++) {
+			
+			
+			acronym += allArr[i].charAt(0);
+			
 		}
 		return acronym.toUpperCase();
 	}
@@ -134,43 +144,49 @@ public class EvaluationService {
 	 */
 	public int getScrabbleScore(String string) {
 		// TODO Write an implementation for this method declaration
-//		int a, e, i, o, u, l, n, r, s, t;
-//		a = e = o = i = u = l = n = r = s = t = 1;
-//		int b, c, m, p;
-//		b = c = m = p = 3;
-//		int k = 5;
-//		int f, h,  v, w, y;
-//		f = h = v = w = y = 4;
-//		int j, x;
-//		j = x = 8;
-//		int q, z ;
-//		q = z = 10;
+
 		
+		//record all the value in hashmap
+		//traverse through string 
+		//declare variable to calculate total scrablescore
+		
+		Map<Character, Integer> storeValue = new HashMap<Character, Integer>() {{
+			put('a', 1);
+			put('e', 1);
+			put('i', 1);
+			put('o', 1);
+			put('u', 1);
+			put('l', 1);
+			put('n', 1);
+			put('r', 1);
+			put('s', 1);
+			put('t', 1);
+			put('g', 2);
+			put('b', 3);
+			put('c', 3);
+			put('m', 3);
+			put('p', 3);
+			put('k', 5);
+			put('h', 4);
+			put('f', 4);
+			put('w', 4);
+			put('y', 4);
+			put('v', 4);
+			put('z', 10);
+			put('q', 10);
+			put('j', 8);
+			put('x', 8);
+		}};
 		int scrabbleScore = 0;
-//		int scrabbleString = Integer.parseInt(string);
+		string = string.toLowerCase();
 		
-		for (int i = 0; i <= string.length(); i++) {
-//			scrabbleString = Character.getNumericValue(string.charAt(i));
-			if(string.charAt(i) == 'a' || string.charAt(i) == 'e' || string.charAt(i) == 'i'
-					|| string.charAt(i) == 'o' || string.charAt(i) == 'u' || string.charAt(i) == 'l'
-					|| string.charAt(i) == 'n' || string.charAt(i) == 'r' || string.charAt(i) == 's'
-					|| string.charAt(i) == 't') {
-				scrabbleScore += 2;
-				
-			}else if (string.charAt(i) == 'b' || string.charAt(i) == 'c' ||
-					string.charAt(i) == 'm' || string.charAt(i) == 'p') {
-				scrabbleScore += 3;
-			}else if(string.charAt(i) == 'k') {
-				scrabbleScore += 5;
-			}else if (string.charAt(i) == 'f' || string.charAt(i) == 'h' || string.charAt(i) == 'v'||
-			string.charAt(i) == 'w' || string.charAt(i) == 'y'){
-				scrabbleScore += 4;
-			}else if(string.charAt(i) == 'j' || string.charAt(i) == 'x') {
-				scrabbleScore += 8;
-			}else if(string.charAt(i) == 'q' || string.charAt(i) == 'z') {
-				scrabbleScore += 10;
+		for(int i = 0; i <string.length(); i++ ) {
+			
+			if(storeValue.containsKey(string.charAt(i))) {
+				scrabbleScore += storeValue.get(string.charAt(i));
 			}
 		}
+		
 		return scrabbleScore;
 	}
 
@@ -211,14 +227,26 @@ public class EvaluationService {
 		
 		//creating mutable string to create the string of available numbers
 		StringBuilder cleanedUpNumber = new StringBuilder();
+		
+		
 		for(char c : numberArray) {
 			if(Character.isDigit(c ))  {
 				cleanedUpNumber.append(c);
 			}
 		}
-		if(cleanedUpNumber.length() > 10) {
+		
+		if(cleanedUpNumber.length() == 11 && cleanedUpNumber.charAt(0) == 1) {
 			cleanedUpNumber.deleteCharAt(0);
 		}
+		
+		/*since only digit will be appended to the cleanedUpNumber; cleanedUpNumber smaller than 10 represents the 
+		 * string had more non=numerics */
+		else if(cleanedUpNumber.length() >= 11 || cleanedUpNumber.length() < 10) {
+			throw new IllegalArgumentException();
+		}
+		
+		
+		
 		return cleanedUpNumber.toString();
 	}
 
@@ -232,8 +260,23 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		String[] stringArr = string.split("\\P{Alpha}+");
+		
+		Map<String, Integer> countStr = new HashMap<>();
+		
+		//keeping track of number of repeated string 
+		//by reassigning value if already in countStr
+		for (int i =0; i < stringArr.length; i++) {
+			if(countStr.get(stringArr[i]) != null) {
+				countStr.put(stringArr[i], countStr.get(stringArr[i]) + 1);
+			}else {
+				
+				countStr.put(stringArr[i], 1);
+				
+			}
+		}
+		return countStr;
 	}
 
 	/**
@@ -313,7 +356,48 @@ public class EvaluationService {
 	 */
 	public String toPigLatin(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		//TODO - last case is failing
+		
+		Set<Character> vowels = new HashSet<Character>() {{
+			add('a');
+			add('e');
+			add('i');
+			add('o');
+			add('u');
+			
+		}};
+		StringBuffer latinStr = new StringBuffer();
+		StringBuffer addAtConsonant = new StringBuffer();
+		String addAtVowel = "ay";
+		boolean vowelCheck = true;
+		int index = 0;
+		
+		while(!vowels.contains(string.charAt(index))) {
+			vowelCheck = false;
+			
+			addAtConsonant.append(string.charAt(index));
+			index++;
+			
+		}
+		addAtConsonant.append("ay");
+		
+		for( int i = index; i < string.length(); i++) {
+			
+			latinStr.append(string.charAt(i));
+			
+//			if(string.charAt(i) == ' ') {
+//				if(vowels.contains(string.charAt(i))) {
+//					addAtLast.append("ay");
+//				}
+//			}
+		}
+		if(vowelCheck) {
+			latinStr.append(addAtVowel);
+		}else {
+			latinStr.append(addAtConsonant);
+		}
+		
+		return latinStr.toString();
 	}
 
 	/**
@@ -332,7 +416,22 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
+
+		double armOrNot = 0;
+		int length = String.valueOf(input).length();
+		
+		int temp = input;
+		int eachDigit;
+		
+		while(temp > 0) {
+			eachDigit = temp % 10;
+			armOrNot += Math.pow(eachDigit, length);
+			temp = temp /10;
+		}
+		
+		if(armOrNot == input)
+			return true;
+		
 		return false;
 	}
 
@@ -347,8 +446,29 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		List<Long> listOfPrimeFactors = new ArrayList<Long>();
+		
+		while(l % 2 == 0) {
+			listOfPrimeFactors.add(2L);
+			l /= 2;
+		}
+		
+		//since l must be odd at this point, incrementing i by 2
+		for( long i = 3; i <= Math.sqrt(l); i += 2) {
+			
+			while(l % i == 0) {
+				listOfPrimeFactors.add(i);
+				l /= i;
+			}
+		}
+		
+		//to handle the prime numbers greater than 2
+		if(l > 2) {
+			listOfPrimeFactors.add(l);
+		}
+		
+		return listOfPrimeFactors;
 	}
 
 	/**
@@ -386,8 +506,37 @@ public class EvaluationService {
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			
+			int recordAscii;
+			int rotValue = 0;
+			String[] charArray = new String[string.length()];
+			StringBuffer rotatedString = new StringBuffer();
+			
+			//recordAscii is getting the actual ASCII value of the character in string
+			//rotValue is the actual value that we need to simplify so that we don't end up rotating non-alphabets
+			for ( int i = 0; i < string.length(); i++) {
+				recordAscii = string.charAt(i);
+				
+				if(recordAscii >=65 && recordAscii <=90) {
+					rotValue = recordAscii + this.key;
+					if(rotValue > 90) {
+						rotValue = rotValue - 90 + 64;
+					}
+					rotatedString.append((char)rotValue);
+				}else if(recordAscii >=97 && recordAscii <= 122) {
+					rotValue = recordAscii + this.key;
+					if(rotValue > 122) {
+						rotValue = rotValue - 122 + 96;
+					}
+					charArray[i] = Character.toString((char)rotValue);
+					rotatedString.append((char)rotValue);
+				}else {
+					rotatedString.append(string.charAt(i));
+				}
+				rotValue = 0;
+			}
+			
+			return rotatedString.toString();
 		}
 
 	}
@@ -405,8 +554,43 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		
+		int count = 2;
+		
+		int all_number = 5;
+		
+		int countForPrime = 0;
+		
+		if(i <= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if(i == 1) {
+			return 2;
+		}
+		if( i == 2) {
+			return 3;
+		}
+		
+		while(count != i) {
+			
+			for(int j = 2; j <= all_number/2; j++) {
+				
+				if(all_number % j == 0) {
+					countForPrime ++;
+					j = all_number/2;
+				}
+				
+			}
+			
+			if(countForPrime == 0) {
+				count ++;
+			}
+			countForPrime = 0;
+			all_number+= 2;
+		}
+		
+		return all_number -= 2;
 	}
 
 	/**
@@ -441,9 +625,73 @@ public class EvaluationService {
 		 * @param string
 		 * @return
 		 */
+		//working fine but try implementing linked list if possible
+		
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			
+			int recordAsciinumber ;
+			
+			int encodingAsciiNumber = 0;
+			
+			int midPoint = 110;
+			
+			StringBuffer encodedStr = new StringBuffer();
+			
+			int groupLen = 0;
+			
+			string = string.toLowerCase();
+			
+			for( int  i =0 ; i < string.length(); i++) {
+				
+				//find ascii number of character
+				recordAsciinumber = (int)string.charAt(i);
+				
+				if(recordAsciinumber >=97 && recordAsciinumber <= 122) {
+					if(recordAsciinumber >= 97 && recordAsciinumber <=midPoint) {
+						encodingAsciiNumber = recordAsciinumber - 97;
+						encodingAsciiNumber = 122 - encodingAsciiNumber;
+						
+						if( encodingAsciiNumber <= 0) {
+							encodingAsciiNumber = encodingAsciiNumber + 97;
+						}
+						
+					}else if(recordAsciinumber > midPoint && recordAsciinumber <= 122) {
+						encodingAsciiNumber = 122 - recordAsciinumber;
+						encodingAsciiNumber = 97 + encodingAsciiNumber;
+					}
+					
+					encodedStr.append((char)encodingAsciiNumber);
+					groupLen++;
+					
+					if (groupLen >= 5 && string.length() != i) {
+						encodedStr.append(' ');
+						groupLen = 0;
+					}
+					
+				}else if(recordAsciinumber >= 48 && recordAsciinumber <= 57) {
+					
+					encodedStr.append(string.charAt(i));
+					groupLen++;
+					
+					if (groupLen >= 5 && string.length() != i) {
+						encodedStr.append(' ');
+						groupLen = 0;
+					}
+					
+				}else {
+					
+					continue;
+					
+				}
+					
+			}
+			
+			if(encodedStr.charAt(encodedStr.length()-1) == ' ') {
+				encodedStr.deleteCharAt(encodedStr.length()-1);
+			}
+				
+			
+			return encodedStr.toString();
 		}
 
 		/**
@@ -453,8 +701,53 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			
+			
+			int recordAsciinumber ;
+			
+			int decodingAsciiNumber = 0;
+			
+			int midPoint = 110;
+			
+			StringBuffer decodedStr = new StringBuffer();
+			
+			string = string.toLowerCase();
+			
+			for( int  i =0 ; i < string.length(); i++) {
+				
+				//find ascii number of character
+				recordAsciinumber = (int)string.charAt(i);
+				
+				if(recordAsciinumber >=97 && recordAsciinumber <= 122) {
+					if(recordAsciinumber >= 97 && recordAsciinumber <=midPoint) {
+						decodingAsciiNumber = recordAsciinumber - 97;
+						decodingAsciiNumber = 122 - decodingAsciiNumber;
+						
+						if( decodingAsciiNumber <= 0) {
+							decodingAsciiNumber = decodingAsciiNumber + 97;
+						}
+						
+					}else if(recordAsciinumber > midPoint && recordAsciinumber <= 122) {
+						decodingAsciiNumber = 122 - recordAsciinumber;
+						decodingAsciiNumber = 97 + decodingAsciiNumber;
+					}
+					
+					decodedStr.append((char)decodingAsciiNumber);
+					
+					
+				}else if(recordAsciinumber >= 48 && recordAsciinumber <= 57) {
+					
+					decodedStr.append(string.charAt(i));
+					
+				}else {
+					
+					continue;
+					
+				}
+					
+			}
+			
+			return decodedStr.toString();
 		}
 	}
 
@@ -481,8 +774,47 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		//not all test cases has passed
+		
+		char[] numberArray = string.toCharArray();
+		
+		//creating mutable string to create the string of available numbers
+		StringBuilder isbnNum = new StringBuilder();
+		
+		
+		for(int c=0; c < numberArray.length; c++) {
+			if(Character.isDigit(c) || numberArray[c] == 'X')  {
+				isbnNum.append(c);
+			}
+		}
+		
+		if(isbnNum.length() < 10) {
+			return false;
+		}
+		
+		
+		int checkValidity = 0;
+		int num = Integer.parseInt(isbnNum.toString());
+		int[] digits = Integer.toString(num).chars().map(c -> c-'0').toArray();
+		
+		for( int i = 0; i < digits.length; i++) {
+			
+			
+			if(digits[i] == 'X') {
+				
+				checkValidity += 10 * (digits.length - i) ;
+				
+			}else {
+				
+				checkValidity += digits[i] * (digits.length - i) ;
+			}
+		}
+		
+		if(checkValidity % 11 == 0) {
+			return true;
+		}
+		return false;		
 	}
 
 	/**
@@ -499,8 +831,23 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		Set<Character> allCharacters = new HashSet<Character>();
+		string = string.toLowerCase();
+		
+		if(string.length() < 26) {
+			return false;
+		}
+		
+		for( int i =0; i < string.length(); i++) {
+			if(string.charAt(i) != ' ') {
+				allCharacters.add(string.charAt(i));
+			}
+		}
+		if( allCharacters.size() < 26)
+			return false;
+		
+		return true;
 	}
 
 	/**
@@ -530,8 +877,33 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		
+		int sumOfMultiples = 0;
+		int multiplier;
+		int multiplies = 1;
+		
+		Set<Integer> noRepeatedMultiplies = new HashSet<Integer>();
+		
+		for(int j = 0; j <= set.length; j++) {
+			multiplier = 1;
+			while(multiplies < i) {
+				
+				multiplies = set[j] * multiplier;
+				
+				
+				if(!noRepeatedMultiplies.contains(multiplies) && multiplies < i ) {
+					sumOfMultiples += multiplies;
+					noRepeatedMultiplies.add(multiplies);
+					
+				}
+				
+				multiplier++;
+			}
+			 
+			
+		}
+		
+		return sumOfMultiples;
 	}
 
 	/**
@@ -603,8 +975,78 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		
+		
+		String [] stringArr = string.split("\\ |\\?");
+		ArrayList<Integer> numbers = new ArrayList<Integer>();
+		Integer result = 0;
+		char[] operator = new char[1];
+		
+		for(int i = 0; i < stringArr.length; i++) {
+			
+			if(isInteger(stringArr[i])) {
+				
+				numbers.add(Integer.parseInt(stringArr[i]));
+				
+			}else {
+				
+				if(stringArr[i].equals("plus")) {
+
+					operator[0] = '+';
+				}
+				
+				else if(stringArr[i].equals("minus")) {
+					operator[0] = '-';
+				}
+				
+				else if(stringArr[i].equals("multiplied")) {
+					operator[0] = '*';
+				}
+				
+				else if(stringArr[i].equals("divided")) {
+					operator[0] = '/';
+				}
+			}
+			
+			
+		}
+		
+		
+		if(operator[0] == '+') {
+			result = numbers.get(0) + numbers.get(1);
+		}
+		if(operator[0] == '-') {
+			result = numbers.get(0) - numbers.get(1);
+		}
+		
+		if(operator[0] == '*') {
+			result = numbers.get(0) * numbers.get(1);
+		}
+		
+		if(operator[0] == '/') {
+			result = numbers.get(0) / numbers.get(1);
+		}
+		
+		return result;
 	}
+	
+	
+	 static boolean isInteger(String s) {
+	      boolean isValidInteger = false;
+	      try
+	      {
+	         Integer.parseInt(s);
+	 
+	         // s is a valid integer
+	 
+	         isValidInteger = true;
+	      }
+	      catch (NumberFormatException ex)
+	      {
+	         // s is not an integer
+	      }
+	 
+	      return isValidInteger;
+	   }
 
 }
